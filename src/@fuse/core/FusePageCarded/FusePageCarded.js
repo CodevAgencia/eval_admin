@@ -161,7 +161,7 @@ const FusePageCarded = forwardRef((props, ref) => {
     <div className={clsx(classes.root, props.innerScroll && classes.innerScroll)} ref={rootRef}>
       <div className={classes.topBg} />
 
-      <div className="flex w-full">
+      <div className="flex w-full mb-16">
         {isLeftSidebar && (
           <FusePageCardedSidebar
             position="left"

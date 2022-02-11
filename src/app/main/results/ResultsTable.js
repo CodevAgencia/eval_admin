@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Typography from '@material-ui/core/Typography';
@@ -6,31 +6,11 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import { useParams } from 'react-router';
 import FuseScrollbars from '../../../@fuse/core/FuseScrollbars/FuseScrollbars';
 import FuseLoading from '../../../@fuse/core/FuseLoading';
 import ResultsTableHead from './ResultsTableHead';
-import { dataResultTable } from '../../utils/fakeDataResultTable';
-
-const initialFakeData = [
-  {
-    id: 1,
-    nombre: 'Enprendedor 1',
-    mail: '15/01/2022',
-    intereses: 'Etapa',
-  },
-  {
-    id: 2,
-    nombre: 'Enprendedor 2',
-    mail: '15/01/2022',
-    intereses: 'Etapa',
-  },
-  {
-    id: 3,
-    nombre: 'Enprendedor 3',
-    mail: '15/01/2022',
-    intereses: 'Etapa',
-  },
-];
+import { getResultsSummary, getResultsTable } from '../../store/app/resultsSlice';
 
 const rows = [
   {
@@ -65,48 +45,26 @@ const rows = [
 
 const ResultsTable = () => {
   const dispatch = useDispatch();
-  // const searchText = useSelector(({ users }) => users.searchText);
+  const { id } = useParams();
 
-  const [loading, setLoading] = useState(false);
-  const [active, setActive] = useState('');
-  const [selected, setSelected] = useState([]);
-  const [data, setData] = useState(initialFakeData);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [order, setOrder] = useState({
-    direction: 'asc',
-    id: null,
-  });
+  const [loading, setLoading] = useState(true);
+  const { results, summary } = useSelector((state) => state.results);
 
   useEffect(() => {
-    // dispatch(getProducts()).then(() => setLoading(false));
-  }, [dispatch]);
-
-  // SEARCH TEXT USE EFFECT
-  // useEffect(() => {
-  //   if (searchText.length !== 0) {
-  //     setData(
-  //       _.filter(data, (item) => item.nombre.toLowerCase().includes(searchText.toLowerCase()))
-  //     );
-  //     setPage(0);
-  //   } else {
-  //     setData(initialFakeData);
-  //   }
-  // }, [initialFakeData, searchText]);
-
-  function handleChangePage(event, value) {
-    setPage(value);
-  }
-
-  function handleChangeRowsPerPage(event) {
-    setRowsPerPage(event.target.value);
-  }
+    if (id) {
+      setTimeout(() => {
+        dispatch(getResultsTable(id)).then(() => setLoading(false));
+        dispatch(getResultsSummary(id)).then(() => setLoading(false));
+        setLoading(false);
+      }, 500);
+    }
+  }, [dispatch, id]);
 
   if (loading) {
     return <FuseLoading />;
   }
 
-  if (data.length === 0) {
+  if (results?.length === 0 && summary?.length === 0) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -126,17 +84,23 @@ const ResultsTable = () => {
         <Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
           <ResultsTableHead rows={rows} />
           <TableBody>
-            {dataResultTable.map((item) => (
+            {results?.map((item) => (
               <>
                 <TableRow
-                  className="h-72 cursor-pointer bg-gray-400"
+                  className="h-40 cursor-pointer bg-gray-400"
                   // hover
                   // role="checkbox"
                   // aria-checked={isSelected}
                   tabIndex={-1}
                   key={item.id}
                 >
-                  <TableCell className="p-4 md:p-16" component="th" scope="row" colSpan={3}>
+                  <TableCell
+                    className="p-0 font-bold"
+                    component="th"
+                    scope="row"
+                    colSpan={3}
+                    align="center"
+                  >
                     {item.thematic}
                   </TableCell>
                   <TableCell className="p-4 md:p-16" component="th" scope="row" colSpan={17} />
@@ -144,14 +108,20 @@ const ResultsTable = () => {
                 {item.data.map((subItem) => (
                   <>
                     <TableRow
-                      className="h-72 cursor-pointer bg-orange-100"
+                      className="h-40 cursor-pointer bg-orange-100"
                       // hover
                       // role="checkbox"
                       // aria-checked={isSelected}
                       tabIndex={-1}
                       key={subItem.id}
                     >
-                      <TableCell className="p-4 md:p-16" component="th" scope="row" colSpan={3}>
+                      <TableCell
+                        className="p-0 font-bold"
+                        component="th"
+                        scope="row"
+                        colSpan={3}
+                        align="center"
+                      >
                         {subItem.subThematic}
                       </TableCell>
                       <TableCell className="p-4 md:p-16" component="th" scope="row" colSpan={17} />
@@ -169,11 +139,18 @@ const ResultsTable = () => {
                           <TableCell className="p-4 md:p-16" component="th" scope="row" colSpan={1}>
                             {value.code}
                           </TableCell>
-                          <TableCell className="p-4 md:p-16" component="th" scope="row" colSpan={1}>
+                          <TableCell
+                            className="p-4 md:p-16"
+                            component="th"
+                            scope="row"
+                            colSpan={1}
+                            style={{ minWidth: '180px' }}
+                          >
                             {value.title}
                           </TableCell>
                           <TableCell
-                            className="p-4 md:p-16 min-w-max"
+                            className="p-4 md:p-16"
+                            style={{ minWidth: '370px' }}
                             component="th"
                             scope="row"
                             colSpan={1}
@@ -204,6 +181,64 @@ const ResultsTable = () => {
                   </>
                 ))}
               </>
+            ))}
+            <TableRow
+              className="h-32 cursor-pointer bg-gray-200"
+              hover
+              // role="checkbox"
+              // aria-checked={isSelected}
+              tabIndex={-1}
+              // key={item.id}
+            >
+              <TableCell className="p-0" component="th" scope="row" colSpan={4} />
+              {summary[0]?.results.map((item) => (
+                <>
+                  <TableCell className="p-0" component="th" scope="row" align="center" colSpan={1}>
+                    {item > 0 ? 'Ok' : 'Incompleto'}
+                  </TableCell>
+                </>
+              ))}
+            </TableRow>
+
+            {summary?.map((resultTotal, index) => (
+              <TableRow
+                className="h-32 cursor-pointer bg-gray-200"
+                hover
+                // role="checkbox"
+                // aria-checked={isSelected}
+                tabIndex={-1}
+                // key={item.id}
+              >
+                {resultTotal?.total ? (
+                  <>
+                    <TableCell className="p-0" component="th" scope="row" colSpan={3} />
+                    <TableCell
+                      className="p-0"
+                      component="th"
+                      scope="row"
+                      colSpan={1}
+                      align="center"
+                    >
+                      {resultTotal?.total}
+                    </TableCell>
+                  </>
+                ) : (
+                  <TableCell className="p-0" component="th" scope="row" colSpan={4} />
+                )}
+                {resultTotal.results.map((result) => (
+                  <>
+                    <TableCell
+                      className="p-0"
+                      component="th"
+                      scope="row"
+                      align="center"
+                      colSpan={1}
+                    >
+                      {result}
+                    </TableCell>
+                  </>
+                ))}
+              </TableRow>
             ))}
           </TableBody>
         </Table>

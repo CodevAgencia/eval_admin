@@ -8,7 +8,7 @@ const ResultsConfig = {
   },
   routes: [
     {
-      path: '/results',
+      path: '/results/:id',
       component: React.lazy(() => import('./Results')),
     },
   ],

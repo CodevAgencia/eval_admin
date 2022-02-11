@@ -165,7 +165,7 @@ const EnterprisingTable = () => {
                       color="primary"
                       size="small"
                       onClick={() => {
-                        history.push('/results');
+                        history.push(`/results/${n.id}`);
                       }}
                     >
                       Ver resultados
