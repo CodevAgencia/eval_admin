@@ -60,17 +60,18 @@ class JwtService extends FuseUtils.EventEmitter {
 
   signInWithEmailAndPassword = (email, password) => {
     return new Promise((resolve, reject) => {
+      const data = { email, password };
       axios
-        .get('/api/auth', {
-          data: {
-            email,
-            password,
+        .post(`${process.env.REACT_APP_EMPRENDEDOR_API}/api/auth`, data, {
+          headers: {
+            'Content-Type': 'application/json',
           },
         })
         .then((response) => {
-          if (response.data.user) {
-            this.setSession(response.data.access_token);
-            resolve(response.data.user);
+          if (response.data.token) {
+            const decoded = jwtDecode(response.data.token);
+            this.setSession(response.data.token);
+            resolve(decoded);
           } else {
             reject(response.data.error);
           }
@@ -79,17 +80,24 @@ class JwtService extends FuseUtils.EventEmitter {
   };
 
   signInWithToken = () => {
+    console.log('signInWithToken');
     return new Promise((resolve, reject) => {
+      const data = {
+        token: this.getAccessToken(),
+      };
+      console.log('DATAAA', data);
       axios
-        .get('/api/auth/access-token', {
-          data: {
-            access_token: this.getAccessToken(),
+        .post(`${process.env.REACT_APP_EMPRENDEDOR_API}/api/auth/refresh`, data, {
+          headers: {
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'multipart/form-data',
           },
         })
         .then((response) => {
-          if (response.data.user) {
-            this.setSession(response.data.access_token);
-            resolve(response.data.user);
+          if (response.data.token) {
+            this.setSession(response.data.token);
+            const decoded = jwtDecode(response.data.token);
+            resolve(decoded);
           } else {
             this.logout();
             reject(new Error('Failed to login with token.'));
@@ -110,10 +118,10 @@ class JwtService extends FuseUtils.EventEmitter {
 
   setSession = (access_token) => {
     if (access_token) {
-      localStorage.setItem('jwt_access_token', access_token);
+      localStorage.setItem('@emprendedor_admin:access_token', access_token);
       axios.defaults.headers.common.Authorization = `Bearer ${access_token}`;
     } else {
-      localStorage.removeItem('jwt_access_token');
+      localStorage.removeItem('@emprendedor_admin:access_token');
       delete axios.defaults.headers.common.Authorization;
     }
   };
@@ -137,7 +145,7 @@ class JwtService extends FuseUtils.EventEmitter {
   };
 
   getAccessToken = () => {
-    return window.localStorage.getItem('jwt_access_token');
+    return window.localStorage.getItem('@emprendedor_admin:access_token');
   };
 }
 

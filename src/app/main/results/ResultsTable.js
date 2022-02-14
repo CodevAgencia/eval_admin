@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Typography from '@material-ui/core/Typography';
@@ -10,7 +10,7 @@ import { useParams } from 'react-router';
 import FuseScrollbars from '../../../@fuse/core/FuseScrollbars/FuseScrollbars';
 import FuseLoading from '../../../@fuse/core/FuseLoading';
 import ResultsTableHead from './ResultsTableHead';
-import { getResultsSummary, getResultsTable } from '../../store/app/resultsSlice';
+import { getResultsTable } from '../../store/app/resultsSlice';
 
 const rows = [
   {
@@ -48,15 +48,16 @@ const ResultsTable = () => {
   const { id } = useParams();
 
   const [loading, setLoading] = useState(true);
-  const { results, summary } = useSelector((state) => state.results);
+  const [results, setResultsTable] = useState([]);
+  const [summary, setSummaryTable] = useState([]);
 
   useEffect(() => {
     if (id) {
-      setTimeout(() => {
-        dispatch(getResultsTable(id)).then(() => setLoading(false));
-        dispatch(getResultsSummary(id)).then(() => setLoading(false));
+      dispatch(getResultsTable(id)).then((res) => {
         setLoading(false);
-      }, 500);
+        setResultsTable(res?.payload?.dataResultTable);
+        setSummaryTable(res?.payload?.dataTotalTable);
+      });
     }
   }, [dispatch, id]);
 
@@ -92,7 +93,7 @@ const ResultsTable = () => {
                   // role="checkbox"
                   // aria-checked={isSelected}
                   tabIndex={-1}
-                  key={item.id}
+                  key={item?.id}
                 >
                   <TableCell
                     className="p-0 font-bold"
@@ -101,11 +102,11 @@ const ResultsTable = () => {
                     colSpan={3}
                     align="center"
                   >
-                    {item.thematic}
+                    {item?.thematic}
                   </TableCell>
                   <TableCell className="p-4 md:p-16" component="th" scope="row" colSpan={17} />
                 </TableRow>
-                {item.data.map((subItem) => (
+                {item?.data?.map((subItem) => (
                   <>
                     <TableRow
                       className="h-40 cursor-pointer bg-orange-100"
@@ -113,7 +114,7 @@ const ResultsTable = () => {
                       // role="checkbox"
                       // aria-checked={isSelected}
                       tabIndex={-1}
-                      key={subItem.id}
+                      key={subItem?.id}
                     >
                       <TableCell
                         className="p-0 font-bold"
@@ -122,11 +123,11 @@ const ResultsTable = () => {
                         colSpan={3}
                         align="center"
                       >
-                        {subItem.subThematic}
+                        {subItem?.subThematic}
                       </TableCell>
                       <TableCell className="p-4 md:p-16" component="th" scope="row" colSpan={17} />
                     </TableRow>
-                    {subItem.values.map((value) => (
+                    {subItem?.values?.map((value) => (
                       <>
                         <TableRow
                           className="h-72 cursor-pointer"
@@ -137,7 +138,7 @@ const ResultsTable = () => {
                           key={1}
                         >
                           <TableCell className="p-4 md:p-16" component="th" scope="row" colSpan={1}>
-                            {value.code}
+                            {value?.code}
                           </TableCell>
                           <TableCell
                             className="p-4 md:p-16"
@@ -146,7 +147,7 @@ const ResultsTable = () => {
                             colSpan={1}
                             style={{ minWidth: '180px' }}
                           >
-                            {value.title}
+                            {value?.title}
                           </TableCell>
                           <TableCell
                             className="p-4 md:p-16"
@@ -155,7 +156,7 @@ const ResultsTable = () => {
                             scope="row"
                             colSpan={1}
                           >
-                            {value.subTitle}
+                            {value?.subTitle}
                           </TableCell>
                           <TableCell
                             className="p-4 md:p-16"
@@ -163,9 +164,9 @@ const ResultsTable = () => {
                             scope="row"
                             align="center"
                           >
-                            {value.total}
+                            {value?.total}
                           </TableCell>
-                          {value.results.map((result) => (
+                          {value?.results.map((result) => (
                             <TableCell
                               className="p-4 md:p-16"
                               component="th"
@@ -190,14 +191,14 @@ const ResultsTable = () => {
               tabIndex={-1}
               // key={item.id}
             >
-              <TableCell className="p-0" component="th" scope="row" colSpan={4} />
-              {summary[0]?.results.map((item) => (
-                <>
-                  <TableCell className="p-0" component="th" scope="row" align="center" colSpan={1}>
-                    {item > 0 ? 'Ok' : 'Incompleto'}
-                  </TableCell>
-                </>
-              ))}
+              {/* <TableCell className="p-0" component="th" scope="row" colSpan={4} /> */}
+              {/* {summary[0]?.results?.map((item) => ( */}
+              {/*  <> */}
+              {/*    <TableCell className="p-0" component="th" scope="row" align="center" colSpan={1}> */}
+              {/*      {item > 0 ? 'Ok' : 'Incompleto'} */}
+              {/*    </TableCell> */}
+              {/*  </> */}
+              {/* ))} */}
             </TableRow>
 
             {summary?.map((resultTotal, index) => (

@@ -1,4 +1,5 @@
 import React from 'react';
+import { authRoles } from '../../auth';
 
 const EnterprisingConfig = {
   settings: {
@@ -6,6 +7,7 @@ const EnterprisingConfig = {
       config: {},
     },
   },
+  auth: authRoles.admin,
   routes: [
     {
       path: '/enterprising',

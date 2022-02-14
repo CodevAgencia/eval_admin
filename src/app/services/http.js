@@ -12,18 +12,23 @@ const get = async (url, responseType) => {
     responseType,
   })
     .then((res) => {
-      const { code } = res;
+      // const { code } = res;
+      console.log('res', res);
 
       if (res && responseType === 'arraybuffer') {
         return res;
       }
 
-      const { data } = res.data;
-      if (code === 200 && data.length > 0) {
+      // const { data } = res.data;
+      const data = res;
+
+      // if (code === 200 && data.length > 0) {
+      if (data.length > 0) {
         console.log('data http', data);
         return data;
       }
-      if (code === 400 || code === 403) {
+      // if (code === 400 || code === 403) {
+      if (data?.length > 0) {
         throw data;
       }
       return data;

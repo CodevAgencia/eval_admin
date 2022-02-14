@@ -1,4 +1,5 @@
 import React from 'react';
+import { authRoles } from '../../auth';
 
 const ResultsConfig = {
   settings: {
@@ -6,6 +7,7 @@ const ResultsConfig = {
       config: {},
     },
   },
+  auth: authRoles.admin,
   routes: [
     {
       path: '/results/:id',

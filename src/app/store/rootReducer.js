@@ -1,6 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import auth from 'app/auth/store';
 import results from 'app/store/app/resultsSlice';
+import enterprising from 'app/store/app/enterprisingSlice';
 import fuse from './fuse';
 import i18n from './i18nSlice';
 
@@ -11,6 +12,7 @@ const createReducer = (asyncReducers) => (state, action) => {
     i18n,
     ...asyncReducers,
     results,
+    enterprising,
   });
 
   /*

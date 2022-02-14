@@ -2,6 +2,7 @@ import i18next from 'i18next';
 import ar from './navigation-i18n/ar';
 import en from './navigation-i18n/en';
 import tr from './navigation-i18n/tr';
+import { authRoles } from '../auth';
 
 i18next.addResourceBundle('en', 'navigation', en);
 i18next.addResourceBundle('tr', 'navigation', tr);
@@ -22,14 +23,7 @@ const navigationConfig = [
         type: 'item',
         icon: 'poll',
         url: '/enterprising',
-      },
-      {
-        id: 'login-component',
-        title: 'Login',
-        translate: 'login',
-        type: 'item',
-        icon: 'person_outline',
-        url: '/login',
+        auth: authRoles.admin,
       },
     ],
   },

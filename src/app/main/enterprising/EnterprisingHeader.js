@@ -6,10 +6,11 @@ import Typography from '@material-ui/core/Typography';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectMainTheme } from 'app/store/fuse/settingsSlice';
+import { setUsersSearchText } from '../../store/app/enterprisingSlice';
 
 const EnterprisingHeader = () => {
   const dispatch = useDispatch();
-  // const searchText = useSelector(({ users }) => users.searchText);
+  const searchText = useSelector(({ enterprising }) => enterprising.searchText);
   const mainTheme = useSelector(selectMainTheme);
 
   return (
@@ -49,13 +50,11 @@ const EnterprisingHeader = () => {
               className="flex flex-1 mx-8"
               disableUnderline
               fullWidth
-              // value={searchText}
-              value="searchText"
+              value={searchText}
               inputProps={{
                 'aria-label': 'Search',
               }}
-              // onChange={(ev) => dispatch(setUsersSearchText(ev))}
-              onChange={(ev) => console.log('modificando')}
+              onChange={(ev) => dispatch(setUsersSearchText(ev))}
             />
           </Paper>
         </ThemeProvider>

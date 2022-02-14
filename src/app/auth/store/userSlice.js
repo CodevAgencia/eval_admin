@@ -4,7 +4,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import history from '@history';
 import _ from '@lodash';
-import { setInitialSettings, setDefaultSettings } from 'app/store/fuse/settingsSlice';
+import { setInitialSettings } from 'app/store/fuse/settingsSlice';
 import { showMessage } from 'app/store/fuse/messageSlice';
 import auth0Service from 'app/services/auth0Service';
 import firebaseService from 'app/services/firebaseService';
@@ -79,14 +79,18 @@ export const setUserData = (user) => async (dispatch, getState) => {
         You can redirect the logged-in user to a specific route depending on his role
          */
 
-  history.location.state = {
-    redirectUrl: user.redirectUrl, // for example 'apps/academy'
-  };
+  if (user.role[0] === 'admin') {
+    history.location.state = {
+      redirectUrl: 'enterprising',
+    };
+  } else {
+    // jwtService.logout();
+  }
 
   /*
     Set User Settings
      */
-  dispatch(setDefaultSettings(user.data.settings));
+  // dispatch(setDefaultSettings(user.data.settings));
 
   dispatch(setUser(user));
 };
@@ -194,9 +198,9 @@ export const updateUserData = (user) => async (dispatch, getState) => {
 const initialState = {
   role: [], // guest
   data: {
-    displayName: 'Admin',
+    displayName: '',
     photoURL: 'assets/images/avatars/Velazquez.jpg',
-    email: 'zona_innfinita@gmail.com',
+    email: '',
     shortcuts: ['calendar', 'mail', 'contacts', 'todo'],
   },
 };

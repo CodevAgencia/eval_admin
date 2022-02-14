@@ -19,7 +19,7 @@ class Auth extends Component {
       // Comment the lines which you do not use
       // this.firebaseCheck(),
       // this.auth0Check(),
-      // this.jwtCheck(),
+      this.jwtCheck(),
     ]).then(() => {
       this.setState({ waitAuthCheck: false });
     });
@@ -29,14 +29,22 @@ class Auth extends Component {
     new Promise((resolve) => {
       jwtService.on('onAutoLogin', () => {
         this.props.showMessage({ message: 'Logging in with JWT' });
-
         /**
          * Sign in and retrieve user data from Api
          */
         jwtService
           .signInWithToken()
           .then((user) => {
-            this.props.setUserData(user);
+            const data = {
+              role: [user?.role],
+              data: {
+                id: user?.id,
+                displayName: 'admin@gmail.com',
+                photoURL: 'assets/images/avatars/Velazquez.jpg',
+                email: 'admin@gmail.com',
+              },
+            };
+            this.props.setUserData(data);
 
             resolve();
 

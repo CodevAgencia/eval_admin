@@ -10,7 +10,16 @@ export const submitLogin =
     return jwtService
       .signInWithEmailAndPassword(email, password)
       .then((user) => {
-        dispatch(setUserData(user));
+        const data = {
+          role: [user?.role],
+          data: {
+            id: user?.id,
+            displayName: email,
+            photoURL: 'assets/images/avatars/Velazquez.jpg',
+            email,
+          },
+        };
+        dispatch(setUserData(data));
 
         return dispatch(loginSuccess());
       })

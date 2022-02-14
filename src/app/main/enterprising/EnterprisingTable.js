@@ -7,11 +7,13 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FuseLoading from '@fuse/core/FuseLoading';
 import Button from '@material-ui/core/Button';
 import { useHistory } from 'react-router';
+import _ from '@lodash';
 import EnterprisingTableHead from './EnterprisingTableHead';
+import { getEnterprising, selectEnterprising } from '../../store/app/enterprisingSlice';
 
 const initialFakeData = [
   {
@@ -43,6 +45,13 @@ const rows = [
     sort: true,
   },
   {
+    id: 'mail',
+    align: 'left',
+    disablePadding: false,
+    label: 'Email',
+    sort: true,
+  },
+  {
     id: 'date',
     align: 'left',
     disablePadding: false,
@@ -68,34 +77,29 @@ const rows = [
 const EnterprisingTable = () => {
   const dispatch = useDispatch();
   const history = useHistory();
-  // const searchText = useSelector(({ users }) => users.searchText);
+  const searchText = useSelector(({ enterprising }) => enterprising.searchText);
 
   const [loading, setLoading] = useState(false);
-  const [active, setActive] = useState('');
-  const [selected, setSelected] = useState([]);
   const [data, setData] = useState(initialFakeData);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [order, setOrder] = useState({
-    direction: 'asc',
-    id: null,
-  });
+  const enterprising = useSelector(selectEnterprising);
 
   useEffect(() => {
-    // dispatch(getProducts()).then(() => setLoading(false));
+    dispatch(getEnterprising());
   }, [dispatch]);
 
   // SEARCH TEXT USE EFFECT
-  // useEffect(() => {
-  //   if (searchText.length !== 0) {
-  //     setData(
-  //       _.filter(data, (item) => item.nombre.toLowerCase().includes(searchText.toLowerCase()))
-  //     );
-  //     setPage(0);
-  //   } else {
-  //     setData(initialFakeData);
-  //   }
-  // }, [initialFakeData, searchText]);
+  useEffect(() => {
+    if (searchText.length !== 0) {
+      setData(
+        _.filter(data, (item) => item?.name?.toLowerCase().includes(searchText.toLowerCase()))
+      );
+      setPage(0);
+    } else {
+      setData(enterprising);
+    }
+  }, [enterprising, searchText]);
 
   function handleChangePage(event, value) {
     setPage(value);
@@ -109,7 +113,7 @@ const EnterprisingTable = () => {
     return <FuseLoading />;
   }
 
-  if (data.length === 0) {
+  if (data?.length === 0) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -129,7 +133,7 @@ const EnterprisingTable = () => {
         <Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
           <EnterprisingTableHead rows={rows} />
           <TableBody>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n) => {
+            {data?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n) => {
               return (
                 <TableRow
                   className="h-72 cursor-pointer"
@@ -142,15 +146,19 @@ const EnterprisingTable = () => {
                   // onClick={(event) => handleClick(n)}
                 >
                   <TableCell className="p-4 md:p-16" component="th" scope="row">
-                    {n.nombre}
+                    {n?.name ? n?.name : '-'}
+                  </TableCell>
+
+                  <TableCell className="p-4 md:p-16" component="th" scope="row">
+                    {n?.email}
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.mail}
+                    {n?.createdAt?.toString().split('T')[0]}
                   </TableCell>
 
                   <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n.intereses}
+                    {n?.status}
                   </TableCell>
 
                   <TableCell
@@ -165,7 +173,7 @@ const EnterprisingTable = () => {
                       color="primary"
                       size="small"
                       onClick={() => {
-                        history.push(`/results/${n.id}`);
+                        history.push(`/results/${n?.id}`);
                       }}
                     >
                       Ver resultados
@@ -181,7 +189,7 @@ const EnterprisingTable = () => {
       <TablePagination
         className="flex-shrink-0 border-t-1"
         component="div"
-        count={data.length}
+        count={data?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         backIconButtonProps={{
