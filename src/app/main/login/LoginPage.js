@@ -193,16 +193,16 @@ function LoginPage() {
               </Typography>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { delay: 0.3 } }}
-            >
-              <Typography variant="subtitle1" color="inherit" className="mt-32 font-medium">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam amet aspernatur
-                corporis eos, illum inventore minus modi nulla odio pariatur quam quos reiciendis
-                repudiandae similique sint suscipit tempore voluptatem voluptatibus.
-              </Typography>
-            </motion.div>
+            {/* <motion.div */}
+            {/*  initial={{ opacity: 0 }} */}
+            {/*  animate={{ opacity: 1, transition: { delay: 0.3 } }} */}
+            {/* > */}
+            {/*  <Typography variant="subtitle1" color="inherit" className="mt-32 font-medium"> */}
+            {/*    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam amet aspernatur */}
+            {/*    corporis eos, illum inventore minus modi nulla odio pariatur quam quos reiciendis */}
+            {/*    repudiandae similique sint suscipit tempore voluptatem voluptatibus. */}
+            {/*  </Typography> */}
+            {/* </motion.div> */}
           </div>
         </div>
       </motion.div>

@@ -1,4 +1,4 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Typography from '@material-ui/core/Typography';
@@ -50,6 +50,7 @@ const ResultsTable = () => {
   const [loading, setLoading] = useState(true);
   const [results, setResultsTable] = useState([]);
   const [summary, setSummaryTable] = useState([]);
+  const { results: dataResults } = useSelector((state) => state.results);
 
   useEffect(() => {
     if (id) {
@@ -80,7 +81,7 @@ const ResultsTable = () => {
   }
 
   return (
-    <div className="w-full flex flex-col" id="BUSCAME">
+    <div className="w-full flex flex-col">
       <FuseScrollbars className="flex-grow overflow-x-auto">
         <Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
           <ResultsTableHead rows={rows} />
@@ -88,7 +89,7 @@ const ResultsTable = () => {
             {results?.map((item) => (
               <>
                 <TableRow
-                  className="h-40 cursor-pointer bg-gray-400"
+                  className="h-40 cursor-pointer bg-light-blue-500"
                   // hover
                   // role="checkbox"
                   // aria-checked={isSelected}
@@ -109,7 +110,7 @@ const ResultsTable = () => {
                 {item?.data?.map((subItem) => (
                   <>
                     <TableRow
-                      className="h-40 cursor-pointer bg-orange-100"
+                      className="h-40 cursor-pointer bg-gray-400"
                       // hover
                       // role="checkbox"
                       // aria-checked={isSelected}
@@ -191,14 +192,14 @@ const ResultsTable = () => {
               tabIndex={-1}
               // key={item.id}
             >
-              {/* <TableCell className="p-0" component="th" scope="row" colSpan={4} /> */}
-              {/* {summary[0]?.results?.map((item) => ( */}
-              {/*  <> */}
-              {/*    <TableCell className="p-0" component="th" scope="row" align="center" colSpan={1}> */}
-              {/*      {item > 0 ? 'Ok' : 'Incompleto'} */}
-              {/*    </TableCell> */}
-              {/*  </> */}
-              {/* ))} */}
+              <TableCell className="p-0" component="th" scope="row" colSpan={4} />
+              {summary?.[0]?.results?.map((item) => (
+                <>
+                  <TableCell className="p-0" component="th" scope="row" align="center" colSpan={1}>
+                    {item > 0 ? 'Ok' : 'Incompleto'}
+                  </TableCell>
+                </>
+              ))}
             </TableRow>
 
             {summary?.map((resultTotal, index) => (
