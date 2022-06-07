@@ -35,6 +35,10 @@ class Auth extends Component {
         jwtService
           .signInWithToken()
           .then((user) => {
+            if(user?.role !== 'admin') {
+              this.props.showMessage({ message: 'El usuario no tiene los permisos necesarios.' });
+              resolve();
+            }
             const data = {
               role: [user?.role],
               data: {
@@ -52,7 +56,6 @@ class Auth extends Component {
           })
           .catch((error) => {
             this.props.showMessage({ message: error.message });
-
             resolve();
           });
       });

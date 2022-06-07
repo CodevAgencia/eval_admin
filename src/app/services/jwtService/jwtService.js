@@ -70,8 +70,13 @@ class JwtService extends FuseUtils.EventEmitter {
         .then((response) => {
           if (response.data.token) {
             const decoded = jwtDecode(response.data.token);
-            this.setSession(response.data.token);
+
+            if(decoded?.role === 'admin') {
+              this.setSession(response.data.token);
+            }
+
             resolve(decoded);
+
           } else {
             reject(response.data.error);
           }
@@ -85,7 +90,6 @@ class JwtService extends FuseUtils.EventEmitter {
       const data = {
         token: this.getAccessToken(),
       };
-      console.log('DATAAA', data);
       axios
         .post(`${process.env.REACT_APP_EMPRENDEDOR_API}/api/auth/refresh`, data, {
           headers: {
@@ -95,8 +99,14 @@ class JwtService extends FuseUtils.EventEmitter {
         })
         .then((response) => {
           if (response.data.token) {
-            this.setSession(response.data.token);
             const decoded = jwtDecode(response.data.token);
+
+            if(decoded?.role !== 'admin') {
+              this.logout();
+              reject(new Error('El usuario no tiene los permisos necesarios.'));
+            }
+
+            this.setSession(response.data.token);
             resolve(decoded);
           } else {
             this.logout();

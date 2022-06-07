@@ -10,6 +10,10 @@ export const submitLogin =
     return jwtService
       .signInWithEmailAndPassword(email, password)
       .then((user) => {
+        if (user.role !== 'admin' || !user?.role) {
+          dispatch(showMessage({ message: 'El usuario no tiene los permisos necesarios.'}));
+          return dispatch(loginError('El usuario no tiene los permisos necesarios.'));
+        }
         const data = {
           role: [user?.role],
           data: {
