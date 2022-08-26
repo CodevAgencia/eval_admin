@@ -15,26 +15,7 @@ import _ from '@lodash';
 import EnterprisingTableHead from './EnterprisingTableHead';
 import { getEnterprising, selectEnterprising } from '../../store/app/enterprisingSlice';
 
-const initialFakeData = [
-  {
-    id: 1,
-    nombre: 'Enprendedor 1',
-    mail: '15/01/2022',
-    intereses: 'Etapa',
-  },
-  {
-    id: 2,
-    nombre: 'Enprendedor 2',
-    mail: '15/01/2022',
-    intereses: 'Etapa',
-  },
-  {
-    id: 3,
-    nombre: 'Enprendedor 3',
-    mail: '15/01/2022',
-    intereses: 'Etapa',
-  },
-];
+const initialFakeData = [];
 
 const rows = [
   {
@@ -42,14 +23,14 @@ const rows = [
     align: 'left',
     disablePadding: false,
     label: 'Nombre',
-    sort: true,
+    sort: false,
   },
   {
     id: 'mail',
     align: 'left',
     disablePadding: false,
     label: 'Email',
-    sort: true,
+    sort: false,
   },
   {
     id: 'date',
@@ -63,14 +44,14 @@ const rows = [
     align: 'left',
     disablePadding: false,
     label: 'Etapa',
-    sort: true,
+    sort: false,
   },
   {
     id: 'actions',
     align: 'center',
     disablePadding: false,
     label: 'Acciones',
-    sort: true,
+    sort: false,
   },
 ];
 
@@ -133,55 +114,60 @@ const EnterprisingTable = () => {
         <Table stickyHeader className="min-w-xl" aria-labelledby="tableTitle">
           <EnterprisingTableHead rows={rows} />
           <TableBody>
-            {data?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((n) => {
-              return (
-                <TableRow
-                  className="h-72 cursor-pointer"
-                  hover
-                  // role="checkbox"
-                  // aria-checked={isSelected}
-                  tabIndex={-1}
-                  key={n.id}
-                  // selected={isSelected}
-                  // onClick={(event) => handleClick(n)}
-                >
-                  <TableCell className="p-4 md:p-16" component="th" scope="row">
-                    {n?.name ? n?.name : '-'}
-                  </TableCell>
-
-                  <TableCell className="p-4 md:p-16" component="th" scope="row">
-                    {n?.email}
-                  </TableCell>
-
-                  <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n?.createdAt?.toString().split('T')[0]}
-                  </TableCell>
-
-                  <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
-                    {n?.status}
-                  </TableCell>
-
-                  <TableCell
-                    className="p-4 md:p-16 truncate"
-                    component="th"
-                    scope="row"
-                    align="center"
+            {data
+              ?.sort(
+                (a, b) => new Date(a?.createdAt)?.getTime() - new Date(b?.createdAt)?.getTime()
+              )
+              ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((n) => {
+                return (
+                  <TableRow
+                    className="h-72 cursor-pointer"
+                    hover
+                    // role="checkbox"
+                    // aria-checked={isSelected}
+                    tabIndex={-1}
+                    key={n.id}
+                    // selected={isSelected}
+                    // onClick={(event) => handleClick(n)}
                   >
-                    <Button
-                      type="button"
-                      variant="outlined"
-                      color="primary"
-                      size="small"
-                      onClick={() => {
-                        history.push(`/results/${n?.id}`);
-                      }}
+                    <TableCell className="p-4 md:p-16" component="th" scope="row">
+                      {n?.name ? n?.name : '-'}
+                    </TableCell>
+
+                    <TableCell className="p-4 md:p-16" component="th" scope="row">
+                      {n?.email}
+                    </TableCell>
+
+                    <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+                      {n?.createdAt?.toString().split('T')[0]}
+                    </TableCell>
+
+                    <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+                      {n?.status}
+                    </TableCell>
+
+                    <TableCell
+                      className="p-4 md:p-16 truncate"
+                      component="th"
+                      scope="row"
+                      align="center"
                     >
-                      Ver resultados
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                      <Button
+                        type="button"
+                        variant="outlined"
+                        color="primary"
+                        size="small"
+                        onClick={() => {
+                          history.push(`/results/${n?.id}`);
+                        }}
+                      >
+                        Ver resultados
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
       </FuseScrollbars>
