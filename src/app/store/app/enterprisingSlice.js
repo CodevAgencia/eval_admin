@@ -3,9 +3,9 @@ import EnterprisingService from '../../services/apiService/enterprisingService';
 
 export const getEnterprising = createAsyncThunk(
   'enterprising/getEnterprising',
-  async (data, { dispatch, rejectWithValue }) => {
+  (data, { dispatch, rejectWithValue }) => {
     try {
-      return await EnterprisingService.getEnterprising();
+      return EnterprisingService.getEnterprising();
     } catch (error) {
       return rejectWithValue(error);
     }

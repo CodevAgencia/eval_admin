@@ -47,6 +47,13 @@ const rows = [
     sort: false,
   },
   {
+    id: 'stage',
+    align: 'left',
+    disablePadding: false,
+    label: 'Puntaje',
+    sort: false,
+  },
+  {
     id: 'actions',
     align: 'center',
     disablePadding: false,
@@ -66,8 +73,20 @@ const EnterprisingTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const enterprising = useSelector(selectEnterprising);
 
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const response = await getEnterprising();
+      dispatch(response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    dispatch(getEnterprising());
+    loadData();
   }, [dispatch]);
 
   // SEARCH TEXT USE EFFECT
@@ -116,7 +135,7 @@ const EnterprisingTable = () => {
           <TableBody>
             {data
               ?.sort(
-                (a, b) => new Date(a?.createdAt)?.getTime() - new Date(b?.createdAt)?.getTime()
+                (a, b) => new Date(b?.createdAt)?.getTime() - new Date(a?.createdAt)?.getTime()
               )
               ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((n) => {
@@ -145,6 +164,10 @@ const EnterprisingTable = () => {
 
                     <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
                       {n?.status}
+                    </TableCell>
+
+                    <TableCell className="p-4 md:p-16 truncate" component="th" scope="row">
+                      {n?.total}
                     </TableCell>
 
                     <TableCell
